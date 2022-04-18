@@ -1,7 +1,10 @@
-import { Role } from "src/role/role.model"
+import { IsEmail, IsNotEmpty, IsPhoneNumber } from "class-validator"
 
 export class CreateUserDto {
+    @IsEmail()
     readonly email: string
+    @IsPhoneNumber()
     readonly phone: string
+    @IsNotEmpty()
     readonly password: string
 }

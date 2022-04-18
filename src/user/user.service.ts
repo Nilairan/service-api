@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
+import { or } from 'sequelize/types';
 import { Role } from 'src/role/role.model';
 import { CreateUserDto } from './dto/create_user.dto';
 import { User } from './user.model';
@@ -21,5 +23,15 @@ export class UserService {
 
     async getUserById(id: number) {
         return await this.userRepository.findOne({where: {id}})
+    }
+
+    async getUserByEmailOrPhone(email: string, phone: string) {
+        const user = await this.userRepository.findOne({where: {
+            [Op.or]: {
+                email: email,
+                phone: phone
+            }
+        }})
+        return user
     }
 }
