@@ -8,11 +8,15 @@ export class RoleService {
 
     constructor(@InjectModel(Role) private roleRepository: typeof Role) {}
 
-    async createRole(roleDto: CreateRoleDto) {
+    async createRole(roleDto: CreateRoleDto): Promise<Role> {
         return this.roleRepository.create(roleDto)
     }
 
-    async getRoleByValue(value: string) {
+    async getAllRoles(): Promise<Role[]> {
+        return this.roleRepository.findAll()
+    }
+
+    async getRoleByValue(value: string): Promise<Role> {
         const role = await this.roleRepository.findOne({where: {value}})
         if (role) {
             return role
@@ -20,11 +24,19 @@ export class RoleService {
         throw new HttpException('Role not found', HttpStatus.NOT_FOUND)
     }
 
-    async getDefaultRole() {
-        const role = await this.getRoleByValue('CLIENT')
-        if (!role) {
-            throw new HttpException('Role not found', HttpStatus.INTERNAL_SERVER_ERROR)
+    async getRoleById(id: number): Promise<Role> {
+        const role = await this.roleRepository.findOne({where: {id}})
+        if (role) {
+            return role
         }
-        return role
+        throw new HttpException('Role not found', HttpStatus.NOT_FOUND)
+    }
+
+    async getDefaultRole(): Promise<Role> {
+        const role = await this.getRoleByValue('CLIENT')
+        if (role) {
+            return role
+        }
+        throw new HttpException('Role not found', HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }

@@ -1,4 +1,9 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/role-auth.guard';
+import { BaseResponse } from 'src/common/base-response.dto';
+import { Roles } from 'src/role/role-auth.decorator';
+import { AddRoleToUserDto } from './dto/add-user-role.dto';
 import { CreateUserDto } from './dto/create_user.dto';
 import { UserService } from './user.service';
 
@@ -8,12 +13,30 @@ export class UserController {
     constructor(private userService: UserService) { }
 
     @Get()
-    findAll() {
-        return this.userService.getAllUser();
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    async findAll() {
+        return new BaseResponse(await this.userService.getAllUser())
     }
 
     @Get('/:id')
-    findUserById(@Param ('id') id: number) {
-        return this.userService.getUserById(id)
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    async findUserById(@Param ('id') id: number) {
+        return new BaseResponse(await this.userService.getUserById(id))
+    }
+
+    @Post('/:id/role')
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    async addRoleByUserId(@Param('id') userId: number, @Body() addRoleToUserDto: AddRoleToUserDto) {
+        return new BaseResponse(await this.userService.addRoleByUserId(userId, addRoleToUserDto.roleId))
+    }
+
+    @Delete('/:id/role')
+    @Roles('ADMIN')
+    @UseGuards(RolesGuard)
+    async deleteRoleByUserId(@Param('id') userId: number, @Body() addRoleToUserDto: AddRoleToUserDto) {
+        return new BaseResponse(await this.userService.deleteRoleByUserId(userId, addRoleToUserDto.roleId))
     }
 }
