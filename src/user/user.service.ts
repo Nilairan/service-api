@@ -1,16 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { use } from 'js-joda';
 import { Op } from 'sequelize';
 import { Role } from 'src/role/role.model';
 import { RoleService } from 'src/role/role.service';
-import { CreateUserDto } from './dto/create_user.dto';
+import { StationService } from 'src/station/station.service';
+import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
 
 @Injectable()
 export class UserService {
     constructor (
         @InjectModel (User) private userRepository: typeof User,
-        private roleService: RoleService
+        private roleService: RoleService,
+        private stationService: StationService
     ) {}
 
     async createUser(userDto: CreateUserDto, role: Role): Promise<User> {
@@ -55,6 +58,16 @@ export class UserService {
                 phone: phone
             }
         }, include: {all: true}})
+        return user
+    }
+
+    async addStationForUser(userId: number, stationId: number): Promise<User> {
+        const user = await this.userRepository.findOne({ where: { id: userId } })
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+        const station = await this.stationService.getStationById(stationId)
+        user.update({
+            stationId: station.id
+        })
         return user
     }
 }

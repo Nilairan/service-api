@@ -4,7 +4,8 @@ import { RolesGuard } from 'src/auth/role-auth.guard';
 import { BaseResponse } from 'src/common/base-response.dto';
 import { Roles } from 'src/role/role-auth.decorator';
 import { AddRoleToUserDto } from './dto/add-user-role.dto';
-import { CreateUserDto } from './dto/create_user.dto';
+import { AddUsetStationDto } from './dto/add-user-station.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -39,4 +40,12 @@ export class UserController {
     async deleteRoleByUserId(@Param('id') userId: number, @Body() addRoleToUserDto: AddRoleToUserDto) {
         return new BaseResponse(await this.userService.deleteRoleByUserId(userId, addRoleToUserDto.roleId))
     }
+
+    @Post('/:id/station/')
+    @Roles('ADMIN', 'MANAGER')
+    @UseGuards(RolesGuard)
+    async addStationForUser(@Param('id') userId: number, @Body() dto: AddUsetStationDto) {
+        return new BaseResponse(await this.userService.addStationForUser(userId, dto.stationId)) 
+    }
+
 }
