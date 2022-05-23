@@ -8,6 +8,8 @@ interface UserCreationAttrs {
     phone: string;
     password: string;
     stationId: number;
+    firstName: string;
+    lastName: string;
 }
 
 @Table({tableName: "users"})
@@ -15,14 +17,20 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
-    @Column({type: DataType.STRING, unique: true, allowNull: true})
+    @Column({type: DataType.STRING, unique: true})
     email: string;
 
-    @Column({type: DataType.STRING, allowNull: true})
+    @Column({type: DataType.STRING})
     phone: string;
 
-    @Column({type: DataType.STRING, allowNull: true})
+    @Column({type: DataType.STRING})
     password: string;
+
+    @Column({type: DataType.STRING})
+    firstName: string
+
+    @Column({type: DataType.STRING})
+    lastName: string
 
     @BelongsToMany(() => Role, () => UserRole)
     roles: Role[];

@@ -33,10 +33,16 @@ export class RoleService {
     }
 
     async getDefaultRole(): Promise<Role> {
-        const role = await this.getRoleByValue('CLIENT')
+        const role = await this.getRoleByValue('STAFF')
         if (role) {
             return role
         }
         throw new HttpException('Role not found', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    async getClientRole() {
+        const role = await this.getRoleByValue('CLIENT')
+        if (!role) new HttpException('Role not found', HttpStatus.INTERNAL_SERVER_ERROR)
+        return role
     }
 }

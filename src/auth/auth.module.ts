@@ -5,6 +5,7 @@ import { UserService } from 'src/user/user.service';
 import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { RoleModule } from 'src/role/role.module';
+import { ClientModule } from 'src/client/client.module';
 
 @Module({
   providers: [AuthService],
@@ -12,6 +13,7 @@ import { RoleModule } from 'src/role/role.module';
   imports: [
     forwardRef(() => UserModule),
     RoleModule,
+    ClientModule,
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET',
       signOptions: {

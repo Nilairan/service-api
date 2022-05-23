@@ -7,4 +7,8 @@ export class CreateUserDto {
     readonly phone: string
     @IsNotEmpty()
     readonly password: string
+    @IsNotEmpty()
+    readonly firstName: string
+    @IsNotEmpty()
+    readonly lastName: string
 }
